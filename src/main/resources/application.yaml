@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: modulith-ecommerce
+
+  profiles:
+    active: local
+
+logging:
+  level:
+    root: info
