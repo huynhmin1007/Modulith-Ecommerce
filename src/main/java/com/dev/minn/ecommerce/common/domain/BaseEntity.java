@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.shared.domain;
+package com.dev.minn.ecommerce.common.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

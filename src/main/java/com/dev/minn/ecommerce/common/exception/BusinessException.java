@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.shared.exception;
+package com.dev.minn.ecommerce.common.exception;
 
 import lombok.Getter;
 

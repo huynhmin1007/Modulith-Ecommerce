@@ -1,5 +1,7 @@
 server:
   port: 9000
+  servlet:
+    context-path: /v1/ecommerce-api
 
 spring:
   datasource:
@@ -47,3 +49,12 @@ spring:
 logging:
   level:
     com.dev.minn.ecommerce: DEBUG
+
+app:
+  keycloak:
+    client-id: modulith-ecommerce-api
+    client-secret: O5KGBbjcrzz3zTJIDhGPv07wT5dD1rbg
+
+    server-url: http://localhost:8180
+    realm: minndev
+    redirect-uri: http://localhost:3000/authenticate

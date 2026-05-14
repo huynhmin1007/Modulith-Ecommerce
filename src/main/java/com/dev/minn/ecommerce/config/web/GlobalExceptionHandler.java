@@ -1,9 +1,9 @@
-package com.dev.minn.ecommerce.infrastructure.web;
+package com.dev.minn.ecommerce.config.web;
 
-import com.dev.minn.ecommerce.shared.api.ApiResponse;
-import com.dev.minn.ecommerce.shared.exception.BaseErrorCode;
-import com.dev.minn.ecommerce.shared.exception.BusinessException;
-import com.dev.minn.ecommerce.shared.exception.GlobalErrorCode;
+import com.dev.minn.ecommerce.common.api.ApiResponse;
+import com.dev.minn.ecommerce.common.exception.BaseErrorCode;
+import com.dev.minn.ecommerce.common.exception.BusinessException;
+import com.dev.minn.ecommerce.common.exception.GlobalErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "com.dev.minn")
@@ -26,16 +25,12 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(code.getStatus())
-                .body(ApiResponse.<Void>builder()
-                        .code(code.getCode())
-                        .message(code.getMessage())
-                        .traceId(UUID.randomUUID().toString())
-                        .build());
+                .body(ApiResponse.error(code.getCode(), code.getMessage(), null, null));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidation(MethodArgumentNotValidException e) {
-        Map<String, String> errors = new HashMap<>();
+        Map<String, Object> errors = new HashMap<>();
 
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
@@ -45,12 +40,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .badRequest()
-                .body(ApiResponse.<Map<String, String>>builder()
-                        .code(GlobalErrorCode.INVALID_REQUEST.getCode())
-                        .message(GlobalErrorCode.INVALID_REQUEST.getMessage())
-                        .data(errors)
-                        .traceId(UUID.randomUUID().toString())
-                        .build()
+                .body(ApiResponse.error(
+                        GlobalErrorCode.INVALID_REQUEST.getCode(),
+                        GlobalErrorCode.INVALID_REQUEST.getMessage(),
+                        null,
+                        errors)
                 );
     }
 
@@ -61,10 +55,11 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .internalServerError()
-                .body(ApiResponse.<Void>builder()
-                        .code(GlobalErrorCode.INTERNAL_ERROR.getCode())
-                        .message(GlobalErrorCode.INTERNAL_ERROR.getMessage())
-                        .traceId(UUID.randomUUID().toString())
-                        .build());
+                .body(ApiResponse.error(
+                        GlobalErrorCode.INTERNAL_ERROR.getCode(),
+                        GlobalErrorCode.INTERNAL_ERROR.getMessage(),
+                        null,
+                        null
+                ));
     }
 }

@@ -1,6 +1,6 @@
-package com.dev.minn.ecommerce.infrastructure.persistence;
+package com.dev.minn.ecommerce.config.persistence;
 
-import com.dev.minn.ecommerce.shared.utils.SecurityUtils;
+import com.dev.minn.ecommerce.common.utils.SecurityUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
