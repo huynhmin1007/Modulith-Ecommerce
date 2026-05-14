@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.shared.utils;
+package com.dev.minn.ecommerce.common.utils;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

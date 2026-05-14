@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.infrastructure.security;
+package com.dev.minn.ecommerce.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
