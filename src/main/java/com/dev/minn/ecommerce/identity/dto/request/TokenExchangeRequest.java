@@ -1,5 +1,7 @@
 package com.dev.minn.ecommerce.identity.dto.request;
 
+import com.dev.minn.ecommerce.identity.validation.annotation.ValidEmail;
+import com.dev.minn.ecommerce.identity.validation.annotation.ValidPassword;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,5 +10,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class TokenExchangeRequest {
-    private String code;
+
+    @ValidEmail
+    private String email;
+
+    @ValidPassword
+    private String password;
 }

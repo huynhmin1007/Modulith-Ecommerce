@@ -51,10 +51,29 @@ logging:
     com.dev.minn.ecommerce: DEBUG
 
 app:
-  keycloak:
-    client-id: modulith-ecommerce-api
-    client-secret: O5KGBbjcrzz3zTJIDhGPv07wT5dD1rbg
+#  keycloak:
+#    client-id: modulith-ecommerce-api
+#    client-secret: O5KGBbjcrzz3zTJIDhGPv07wT5dD1rbg
+#
+#    server-url: http://localhost:8180
+#    realm: minndev
+#    redirect-uri: http://localhost:3000/authenticate
 
-    server-url: http://localhost:8180
-    realm: minndev
-    redirect-uri: http://localhost:3000/authenticate
+  brevo:
+    host: smtp-relay.brevo.com
+    port: 587
+    smtp-key: xsmtpsib-ea2b8502a6cf1d04d4947016fc1063b26c0b8d8e76cdbef98fe5af8d1a345ada-3vuRQPaXIOhQqR7g
+
+  rsa:
+    private-key: classpath:certs/private.pem
+    public-key: classpath:certs/public.pem
+
+  jwt:
+    access-validity: 900 # access token (15 phút)
+    refresh-validity: 604800 # refresh token (7 ngày)
+    issuer: "minn-dev.ecommerce.com"
+
+  security:
+    public-endpoints:
+      - /auth/**
+      - /public/**

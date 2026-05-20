@@ -4,9 +4,7 @@ import com.dev.minn.ecommerce.identity.dto.request.LogoutRequest;
 import com.dev.minn.ecommerce.identity.dto.request.RefreshTokenRequest;
 import com.dev.minn.ecommerce.identity.dto.request.TokenExchangeRequest;
 import com.dev.minn.ecommerce.identity.dto.response.AuthenticationResponse;
-import com.dev.minn.ecommerce.identity.service.impl.keycloak.KeycloakAuthenticationAdapter;
-import com.dev.minn.ecommerce.identity.service.impl.keycloak.KeycloakProperties;
-import jakarta.servlet.http.HttpServletResponse;
+import com.dev.minn.ecommerce.identity.service.AuthenticationPort;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,8 +14,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-
 @Slf4j
 @RestController
 @RequestMapping("/auth")
@@ -25,21 +21,13 @@ import java.io.IOException;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
 
-    KeycloakAuthenticationAdapter keycloakAuthenticationAdapter;
-    KeycloakProperties keycloakProperties;
-
-    @GetMapping("/login")
-    public void login(HttpServletResponse response) throws IOException {
-        String authUrl = keycloakProperties.getAuthUrl();
-
-        response.sendRedirect(authUrl);
-    }
+    AuthenticationPort authenticationPort;
 
     @PostMapping("/exchange")
     public ResponseEntity<?> exchangeToken(@RequestBody TokenExchangeRequest request) {
-        log.info("Token exchange request: {}", request.getCode());
+        log.info("Token exchange request: {}", request.getEmail());
 
-        AuthenticationResponse tokenResponse = keycloakAuthenticationAdapter.exchangeToken(request);
+        AuthenticationResponse tokenResponse = authenticationPort.exchangeToken(request);
 
         ResponseCookie accessCookie = saveTokenCookie(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn(), "access_token");
         ResponseCookie refreshCookie = saveTokenCookie(tokenResponse.getRefreshToken(), tokenResponse.getRefreshExpiresIn(), "refresh_token");
@@ -54,7 +42,7 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequest request) {
         log.info("Refresh token request: {}", request.getRefreshToken());
 
-        AuthenticationResponse tokenResponse = keycloakAuthenticationAdapter.refreshToken(request);
+        AuthenticationResponse tokenResponse = authenticationPort.refreshToken(request);
 
         ResponseCookie accessCookie = saveTokenCookie(tokenResponse.getAccessToken(), tokenResponse.getExpiresIn(), "access_token");
         ResponseCookie refreshCookie = saveTokenCookie(tokenResponse.getRefreshToken(), tokenResponse.getRefreshExpiresIn(), "refresh_token");
@@ -66,9 +54,11 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@CookieValue(name = "refresh_token", required = false) String refreshToken) {
-        if(refreshToken != null && !refreshToken.isEmpty()) {
-            keycloakAuthenticationAdapter.logout(new LogoutRequest(refreshToken));
+    public ResponseEntity<?> logout(
+            @CookieValue(name = "refresh_token", required = false) String refreshToken
+    ) {
+        if (refreshToken != null && !refreshToken.isEmpty()) {
+            authenticationPort.logout(new LogoutRequest(refreshToken));
         }
 
         ResponseCookie deleteAccessCookie = deleteTokenCookie("access_token");
