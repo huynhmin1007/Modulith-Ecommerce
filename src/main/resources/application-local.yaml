@@ -44,7 +44,7 @@ spring:
         order_updates: true
         order_inserts: true
         format_sql: true
-    show-sql: true
+    show-sql: false
 
 logging:
   level:

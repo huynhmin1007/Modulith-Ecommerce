@@ -213,11 +213,9 @@ public class JwtAuthenticationAdapter implements AuthenticationPort {
 
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRolesAsRole().forEach(role -> {
-                authorities.add("ROLE_" + role.getName().toUpperCase());
-
                 if (!CollectionUtils.isEmpty(role.getPermissionsAsPermission())) {
                     role.getPermissionsAsPermission().forEach(permission ->
-                            authorities.add(permission.getName().toUpperCase())
+                            authorities.add(permission.getName().toLowerCase())
                     );
                 }
             });

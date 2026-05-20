@@ -42,7 +42,7 @@ public class User extends SoftDeleteEntity<UUID> {
     UserStatus status = UserStatus.INACTIVE;
 
     @OneToMany(
-            mappedBy = "account",
+            mappedBy = "user",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
