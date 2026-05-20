@@ -9,12 +9,15 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum IdentityErrorCode implements BaseErrorCode {
 
-    UNAUTHORIZED(1001, "Authentication is required to access this resource.", HttpStatus.UNAUTHORIZED),
     MISSING_TOKEN(1002, "Authentication token is missing from the request.", HttpStatus.UNAUTHORIZED),
     INVALID_TOKEN(1003, "The provided token is invalid or malformed.", HttpStatus.UNAUTHORIZED),
     TOKEN_EXPIRED(1004, "The authentication session has expired. Please log in again.", HttpStatus.UNAUTHORIZED),
     INVALID_AUTH_CODE(1005, "The authorization code is invalid or has already been used.", HttpStatus.UNAUTHORIZED),
     INVALID_REFRESH_TOKEN(1006, "The refresh token is invalid, expired, or has been revoked.", HttpStatus.UNAUTHORIZED),
+    USER_NOT_FOUND(1007, "User not found.", HttpStatus.NOT_FOUND),
+    INVALID_CREDENTIALS(1008, "Invalid credentials.", HttpStatus.UNAUTHORIZED),
+    TOKEN_REVOKED(1009, "The authentication token has been revoked.", HttpStatus.UNAUTHORIZED),
+
 
     // 11xx: Authorization Errors (403 Forbidden)
     ACCESS_DENIED(1101, "You do not have permission to access this resource.", HttpStatus.FORBIDDEN),
