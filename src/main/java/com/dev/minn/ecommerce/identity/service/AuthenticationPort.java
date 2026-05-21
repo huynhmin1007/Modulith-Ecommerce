@@ -10,7 +10,7 @@ public interface AuthenticationPort {
 
     AuthenticationResponse exchangeToken(TokenExchangeRequest request);
     TokenPayload verifyAndExtract(String token, String expectedTokenType);
-    AuthenticationResponse refreshToken(RefreshTokenRequest request);
+    AuthenticationResponse refreshToken(String refreshToken);
 
     void logout(LogoutRequest request);
     void revokeToken(String token, long timeoutMillis);

@@ -25,6 +25,7 @@ public class Permission extends BaseEntity<UUID> {
     @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     UUID id;
 
+    // service:entity:action:scope
     @Column(unique = true, nullable = false, length = 100)
     String name;
 

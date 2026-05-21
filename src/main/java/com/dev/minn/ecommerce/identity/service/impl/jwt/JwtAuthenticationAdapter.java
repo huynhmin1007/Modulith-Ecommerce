@@ -4,7 +4,6 @@ import com.dev.minn.ecommerce.common.exception.BusinessException;
 import com.dev.minn.ecommerce.identity.config.RsaKeyProperties;
 import com.dev.minn.ecommerce.identity.dto.TokenPayload;
 import com.dev.minn.ecommerce.identity.dto.request.LogoutRequest;
-import com.dev.minn.ecommerce.identity.dto.request.RefreshTokenRequest;
 import com.dev.minn.ecommerce.identity.dto.request.TokenExchangeRequest;
 import com.dev.minn.ecommerce.identity.dto.response.AuthenticationResponse;
 import com.dev.minn.ecommerce.identity.entity.User;
@@ -25,6 +24,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -37,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
+@Transactional(readOnly = true)
 public class JwtAuthenticationAdapter implements AuthenticationPort {
 
     RedisService redisService;
@@ -115,26 +116,40 @@ public class JwtAuthenticationAdapter implements AuthenticationPort {
     }
 
     @Override
-    public AuthenticationResponse refreshToken(RefreshTokenRequest request) {
-        JWTClaimsSet claims = extractClaims(request.getRefreshToken());
+    public AuthenticationResponse refreshToken(String refreshToken) {
+        try {
+            JWTClaimsSet claims = extractClaims(refreshToken);
 
-        String jti = claims.getJWTID();
-        Date expirationTime = claims.getExpirationTime();
+            if (!"refresh".equalsIgnoreCase(claims.getStringClaim("tokenType"))) {
+                throw new BusinessException(IdentityErrorCode.INVALID_TOKEN);
+            }
 
-        long timeToLiveMillis = expirationTime.getTime() - System.currentTimeMillis();
-        if (timeToLiveMillis > 0) {
-            revokeToken(jti, timeToLiveMillis);
+            boolean isBlacklisted = redisService.exists(BLACKLIST_PREFIX + claims.getJWTID());
+            if (isBlacklisted) {
+                throw new BusinessException(IdentityErrorCode.TOKEN_REVOKED);
+            }
+
+            String jti = claims.getJWTID();
+            Date expirationTime = claims.getExpirationTime();
+
+            long timeToLiveMillis = expirationTime.getTime() - System.currentTimeMillis();
+            if (timeToLiveMillis > 0) {
+                revokeToken(jti, timeToLiveMillis);
+            }
+
+            User user = userRepository.findById(UUID.fromString(claims.getSubject()))
+                    .orElseThrow(IdentityErrorCode.USER_NOT_FOUND::throwException);
+
+            return AuthenticationResponse.builder()
+                    .accessToken(generateAccessToken(user))
+                    .refreshToken(generateRefreshToken(user))
+                    .expiresIn(jwtProperties.accessValidity)
+                    .refreshExpiresIn(jwtProperties.refreshValidity)
+                    .build();
+        } catch (ParseException e) {
+            log.error("Failed to refresh token: {}", refreshToken, e);
+            throw new BusinessException(IdentityErrorCode.INVALID_TOKEN);
         }
-
-        User user = userRepository.findById(UUID.fromString(claims.getSubject()))
-                .orElseThrow(IdentityErrorCode.USER_NOT_FOUND::throwException);
-
-        return AuthenticationResponse.builder()
-                .accessToken(generateAccessToken(user))
-                .refreshToken(generateRefreshToken(user))
-                .expiresIn(jwtProperties.accessValidity)
-                .refreshExpiresIn(jwtProperties.refreshValidity)
-                .build();
     }
 
     @Override
@@ -213,11 +228,9 @@ public class JwtAuthenticationAdapter implements AuthenticationPort {
 
         if (!CollectionUtils.isEmpty(user.getRoles())) {
             user.getRolesAsRole().forEach(role -> {
-                authorities.add("ROLE_" + role.getName().toUpperCase());
-
                 if (!CollectionUtils.isEmpty(role.getPermissionsAsPermission())) {
                     role.getPermissionsAsPermission().forEach(permission ->
-                            authorities.add(permission.getName().toUpperCase())
+                            authorities.add(permission.getName().toLowerCase())
                     );
                 }
             });

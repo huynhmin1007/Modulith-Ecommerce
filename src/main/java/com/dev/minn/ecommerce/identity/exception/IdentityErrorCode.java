@@ -18,12 +18,14 @@ public enum IdentityErrorCode implements BaseErrorCode {
     INVALID_CREDENTIALS(1008, "Invalid credentials.", HttpStatus.UNAUTHORIZED),
     TOKEN_REVOKED(1009, "The authentication token has been revoked.", HttpStatus.UNAUTHORIZED),
 
-
     // 11xx: Authorization Errors (403 Forbidden)
     ACCESS_DENIED(1101, "You do not have permission to access this resource.", HttpStatus.FORBIDDEN),
 
     // 12xx: Client/Input Errors (400 Bad Request)
     LOGOUT_FAILED(1201, "Logout failed due to an invalid or missing token.", HttpStatus.BAD_REQUEST),
+    USER_EXISTED(1202, "User already exists.", HttpStatus.BAD_REQUEST),
+    OTP_EXPIRED(1203, "OTP has expired.", HttpStatus.BAD_REQUEST),
+    INVALID_OTP(1204, "Invalid OTP.", HttpStatus.BAD_REQUEST),
 
     // 19xx: Identity Server/Integration Errors (502 / 500)
     IDENTITY_SERVER_ERROR(1999, "Identity provider is currently unavailable. Please try again later.", HttpStatus.BAD_GATEWAY);
