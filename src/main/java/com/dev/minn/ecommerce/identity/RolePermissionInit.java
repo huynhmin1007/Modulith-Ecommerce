@@ -20,62 +20,193 @@ public class RolePermissionInit {
 
     @Transactional
     public void initRolesAndPermissions() {
-        Long roleCount = entityManager.createQuery("SELECT COUNT(r) FROM Role r", Long.class).getSingleResult();
+
+        Long roleCount = entityManager
+                .createQuery("SELECT COUNT(r) FROM Role r", Long.class)
+                .getSingleResult();
+
         if (roleCount > 0) {
-            log.info("Roles và Permissions đã tồn tại, bỏ qua Init.");
+            log.info("Roles & permissions đã tồn tại, bỏ qua init.");
             return;
         }
 
-        log.info("Bắt đầu khởi tạo Roles và Permissions (PBAC)...");
+        log.info("Bắt đầu khởi tạo PBAC roles & permissions...");
 
-        // 1. TẠO PERMISSIONS
-        Permission pAll = createPermission("*:*:*", "Toàn quyền hệ thống");
-        Permission pProductRead = createPermission("catalog:product:read", "Xem sản phẩm");
-        Permission pProductWrite = createPermission("catalog:product:write", "Quản lý sản phẩm");
-        Permission pOrderRead = createPermission("sales:order:read", "Xem đơn hàng");
-        Permission pOrderWrite = createPermission("sales:order:write", "Tạo và xử lý đơn hàng");
-        Permission pPaymentRead = createPermission("finance:payment:read", "Xem giao dịch");
-        Permission pPaymentWrite = createPermission("finance:payment:write", "Thanh toán, rút tiền");
-        Permission pStatsRead = createPermission("finance:statistics:read", "Xem thống kê doanh thu");
-        Permission pProfileRead = createPermission("user:profile:read", "Xem thông tin user");
-        Permission pProfileWrite = createPermission("user:profile:write", "Sửa thông tin cá nhân");
+        // =========================================================
+        // SYSTEM
+        // =========================================================
 
-        // 2. TẠO ROLES
-        Role roleCustomer = createRole("CUSTOMER");
-        roleCustomer.addPermission(pProductRead);
-        roleCustomer.addPermission(pOrderRead);
-        roleCustomer.addPermission(pOrderWrite);
-        roleCustomer.addPermission(pPaymentRead);
-        roleCustomer.addPermission(pProfileRead);
-        roleCustomer.addPermission(pProfileWrite);
-        entityManager.persist(roleCustomer);
+        Permission pSystemAll = createPermission(
+                "*:*:*:any",
+                "Toàn quyền hệ thống"
+        );
 
-        Role roleSeller = createRole("SELLER");
-        roleSeller.addPermission(pProductRead);
-        roleSeller.addPermission(pProductWrite);
-        roleSeller.addPermission(pOrderRead);
-        roleSeller.addPermission(pOrderWrite);
-        roleSeller.addPermission(pPaymentRead);
-        roleSeller.addPermission(pPaymentWrite);
-        roleSeller.addPermission(pStatsRead);
-        roleSeller.addPermission(pProfileRead);
-        roleSeller.addPermission(pProfileWrite);
-        entityManager.persist(roleSeller);
+        // =========================================================
+        // IDENTITY
+        // =========================================================
 
-        Role roleAdmin = createRole("ADMIN");
-        roleAdmin.addPermission(pAll);
-        entityManager.persist(roleAdmin);
+        Permission pUserReadOwn = createPermission(
+                "identity:user:read:own",
+                "Xem thông tin tài khoản cá nhân"
+        );
 
-        log.info("Khởi tạo Roles và Permissions thành công!");
+        Permission pUserWriteOwn = createPermission(
+                "identity:user:update:own",
+                "Cập nhật tài khoản cá nhân"
+        );
+
+        Permission pUserReadAny = createPermission(
+                "identity:user:read:any",
+                "Xem thông tin user khác"
+        );
+
+        // =========================================================
+        // CATALOG
+        // =========================================================
+
+        Permission pProductReadAny = createPermission(
+                "catalog:product:read:any",
+                "Xem mọi sản phẩm"
+        );
+
+        Permission pProductCreateOwn = createPermission(
+                "catalog:product:create:own",
+                "Tạo sản phẩm của shop mình"
+        );
+
+        Permission pProductUpdateOwn = createPermission(
+                "catalog:product:update:own",
+                "Cập nhật sản phẩm của shop mình"
+        );
+
+        Permission pProductDeleteOwn = createPermission(
+                "catalog:product:delete:own",
+                "Xóa sản phẩm của shop mình"
+        );
+
+        // =========================================================
+        // SALES
+        // =========================================================
+
+        Permission pOrderCreateOwn = createPermission(
+                "sales:order:create:own",
+                "Tạo đơn hàng"
+        );
+
+        Permission pOrderReadOwn = createPermission(
+                "sales:order:read:own",
+                "Xem đơn hàng của mình"
+        );
+
+        Permission pOrderUpdateOwn = createPermission(
+                "sales:order:update:own",
+                "Cập nhật đơn hàng của mình"
+        );
+
+        // =========================================================
+        // PAYMENT
+        // =========================================================
+
+        Permission pPaymentReadOwn = createPermission(
+                "finance:payment:read:own",
+                "Xem lịch sử thanh toán cá nhân"
+        );
+
+        Permission pPaymentCreateOwn = createPermission(
+                "finance:payment:create:own",
+                "Thanh toán"
+        );
+
+        // =========================================================
+        // STATISTICS
+        // =========================================================
+
+        Permission pStatisticsReadOwn = createPermission(
+                "finance:statistics:read:own",
+                "Xem thống kê shop"
+        );
+
+        // =========================================================
+        // ROLES
+        // =========================================================
+
+        // ---------------------------------------------------------
+        // CUSTOMER
+        // ---------------------------------------------------------
+
+        Role customerRole = createRole("CUSTOMER");
+
+        customerRole.addPermission(pUserReadOwn);
+        customerRole.addPermission(pUserWriteOwn);
+
+        customerRole.addPermission(pProductReadAny);
+
+        customerRole.addPermission(pOrderCreateOwn);
+        customerRole.addPermission(pOrderReadOwn);
+
+        customerRole.addPermission(pPaymentReadOwn);
+        customerRole.addPermission(pPaymentCreateOwn);
+
+        entityManager.persist(customerRole);
+
+        // ---------------------------------------------------------
+        // SELLER
+        // ---------------------------------------------------------
+
+        Role sellerRole = createRole("SELLER");
+
+        // user
+        sellerRole.addPermission(pUserReadOwn);
+        sellerRole.addPermission(pUserWriteOwn);
+        sellerRole.addPermission(pUserReadAny);
+
+        // product
+        sellerRole.addPermission(pProductReadAny);
+        sellerRole.addPermission(pProductCreateOwn);
+        sellerRole.addPermission(pProductUpdateOwn);
+        sellerRole.addPermission(pProductDeleteOwn);
+
+        // order
+        sellerRole.addPermission(pOrderReadOwn);
+        sellerRole.addPermission(pOrderUpdateOwn);
+
+        // payment
+        sellerRole.addPermission(pPaymentReadOwn);
+
+        // statistics
+        sellerRole.addPermission(pStatisticsReadOwn);
+
+        entityManager.persist(sellerRole);
+
+        // ---------------------------------------------------------
+        // ADMIN
+        // ---------------------------------------------------------
+
+        Role adminRole = createRole("ADMIN");
+
+        adminRole.addPermission(pSystemAll);
+
+        entityManager.persist(adminRole);
+
+        log.info("Khởi tạo PBAC roles & permissions thành công!");
     }
 
     private Permission createPermission(String name, String description) {
-        Permission permission = Permission.builder().name(name).description(description).build();
+
+        Permission permission = Permission.builder()
+                .name(name)
+                .description(description)
+                .build();
+
         entityManager.persist(permission);
+
         return permission;
     }
 
     private Role createRole(String name) {
-        return Role.builder().name(name).build();
+
+        return Role.builder()
+                .name(name)
+                .build();
     }
 }

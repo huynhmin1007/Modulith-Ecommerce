@@ -77,3 +77,4 @@ app:
     public-endpoints:
       - /auth/**
       - /public/**
+      - /users/public/**

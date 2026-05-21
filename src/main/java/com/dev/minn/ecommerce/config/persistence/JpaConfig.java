@@ -15,7 +15,7 @@ public class JpaConfig {
     @Bean
     AuditorAware<String> auditorProvider() {
         return () -> {
-            String id = SecurityUtils.getCurrentAccountId();
+            String id = SecurityUtils.getCurrentUserId();
 
             if (id == null)
                 return Optional.of("SYSTEM");
