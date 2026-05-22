@@ -41,6 +41,8 @@ public class UserController {
     @PreAuthorize("@iam.has('identity:user:read:any') or authentication.name == #id")
     @GetMapping("/{id}")
     public UserInfo getInfo(@PathVariable String id, Authentication authentication) {
+        System.out.println(authentication.getName());
+        System.out.println(authentication.getAuthorities());
         return userManagementPort.getInfo(id);
     }
 }

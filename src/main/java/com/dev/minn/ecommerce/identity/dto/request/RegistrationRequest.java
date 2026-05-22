@@ -4,12 +4,11 @@ import com.dev.minn.ecommerce.identity.validation.annotation.ValidEmail;
 import com.dev.minn.ecommerce.identity.validation.annotation.ValidPassword;
 import com.dev.minn.ecommerce.identity.validation.annotation.ValidUsername;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter

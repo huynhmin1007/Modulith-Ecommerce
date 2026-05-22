@@ -161,11 +161,6 @@ public class JwtAuthenticationAdapter implements AuthenticationPort {
         redisService.set(BLACKLIST_PREFIX + token, "revoked", timeoutMillis, TimeUnit.MILLISECONDS);
     }
 
-    @Override
-    public Object extractPayload(String token) {
-        return extractClaims(token);
-    }
-
     private String generateAccessToken(User user) {
         try {
             JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)

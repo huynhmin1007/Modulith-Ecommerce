@@ -14,5 +14,4 @@ public interface AuthenticationPort {
 
     void logout(LogoutRequest request);
     void revokeToken(String token, long timeoutMillis);
-    Object extractPayload(String token);
 }
