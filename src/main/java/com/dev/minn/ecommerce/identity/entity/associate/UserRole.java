@@ -15,10 +15,11 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "account_roles",
+        schema = "identity",
+        name = "user_roles",
         uniqueConstraints = @UniqueConstraint(
-                name = "uq_account_role",
-                columnNames = {"account_id", "role_id"}
+                name = "uq_user_role",
+                columnNames = {"user_id", "role_id"}
         )
 )
 @EntityListeners(AuditingEntityListener.class)

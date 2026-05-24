@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.entity;
 
-import com.dev.minn.ecommerce.common.domain.SoftDeleteEntity;
+import com.dev.minn.ecommerce.common.domain.entity.SoftDeleteEntity;
 import com.dev.minn.ecommerce.identity.constant.UserStatus;
 import com.dev.minn.ecommerce.identity.entity.associate.UserRole;
 import jakarta.persistence.*;
@@ -15,7 +15,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "users")
+@Table(
+        schema = "identity",
+        name = "users"
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

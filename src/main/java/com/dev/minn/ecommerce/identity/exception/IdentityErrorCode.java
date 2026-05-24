@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.exception;
 
-import com.dev.minn.ecommerce.common.exception.BaseErrorCode;
+import com.dev.minn.ecommerce.common.application.exception.BaseErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

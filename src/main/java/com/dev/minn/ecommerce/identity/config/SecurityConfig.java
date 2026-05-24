@@ -1,8 +1,8 @@
 package com.dev.minn.ecommerce.identity.config;
 
-import com.dev.minn.ecommerce.common.api.ApiResponse;
+import com.dev.minn.ecommerce.common.application.dto.ApiResponse;
 import com.dev.minn.ecommerce.common.config.AppProperties;
-import com.dev.minn.ecommerce.common.exception.GlobalErrorCode;
+import com.dev.minn.ecommerce.common.application.exception.GlobalErrorCode;
 import com.dev.minn.ecommerce.identity.filter.JwtAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
@@ -15,8 +15,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;

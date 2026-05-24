@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.common.api;
+package com.dev.minn.ecommerce.common.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

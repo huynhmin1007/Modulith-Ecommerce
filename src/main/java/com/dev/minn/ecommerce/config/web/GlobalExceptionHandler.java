@@ -1,9 +1,9 @@
 package com.dev.minn.ecommerce.config.web;
 
-import com.dev.minn.ecommerce.common.api.ApiResponse;
-import com.dev.minn.ecommerce.common.exception.BaseErrorCode;
-import com.dev.minn.ecommerce.common.exception.BusinessException;
-import com.dev.minn.ecommerce.common.exception.GlobalErrorCode;
+import com.dev.minn.ecommerce.common.application.dto.ApiResponse;
+import com.dev.minn.ecommerce.common.application.exception.BaseErrorCode;
+import com.dev.minn.ecommerce.common.application.exception.BusinessException;
+import com.dev.minn.ecommerce.common.application.exception.GlobalErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
