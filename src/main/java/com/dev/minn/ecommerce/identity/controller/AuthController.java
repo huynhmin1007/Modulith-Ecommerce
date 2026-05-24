@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.controller;
 
-import com.dev.minn.ecommerce.common.api.ApiResponse;
+import com.dev.minn.ecommerce.common.application.dto.ApiResponse;
 import com.dev.minn.ecommerce.identity.dto.request.LogoutRequest;
 import com.dev.minn.ecommerce.identity.dto.request.RefreshTokenRequest;
 import com.dev.minn.ecommerce.identity.dto.request.TokenExchangeRequest;

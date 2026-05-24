@@ -15,6 +15,7 @@ import java.util.Objects;
 
 @Entity
 @Table(
+        schema = "identity",
         name = "role_permissions",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_role_permission",

@@ -1,4 +1,4 @@
-package com.dev.minn.ecommerce.common.exception;
+package com.dev.minn.ecommerce.common.application.exception;
 
 import org.springframework.http.HttpStatus;
 

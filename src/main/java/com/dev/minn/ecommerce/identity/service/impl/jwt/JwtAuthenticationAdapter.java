@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.service.impl.jwt;
 
-import com.dev.minn.ecommerce.common.exception.BusinessException;
+import com.dev.minn.ecommerce.common.application.exception.BusinessException;
 import com.dev.minn.ecommerce.identity.config.RsaKeyProperties;
 import com.dev.minn.ecommerce.identity.dto.TokenPayload;
 import com.dev.minn.ecommerce.identity.dto.request.LogoutRequest;
