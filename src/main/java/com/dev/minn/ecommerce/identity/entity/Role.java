@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.entity;
 
-import com.dev.minn.ecommerce.common.domain.BaseEntity;
+import com.dev.minn.ecommerce.common.domain.entity.BaseEntity;
 import com.dev.minn.ecommerce.identity.entity.associate.RolePermission;
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,7 +13,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "roles")
+@Table(
+        schema = "identity",
+        name = "roles"
+)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter

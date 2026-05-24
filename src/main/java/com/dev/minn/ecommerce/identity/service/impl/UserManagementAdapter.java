@@ -1,7 +1,8 @@
 package com.dev.minn.ecommerce.identity.service.impl;
 
-import com.dev.minn.ecommerce.common.exception.BusinessException;
-import com.dev.minn.ecommerce.common.exception.GlobalErrorCode;
+import com.dev.minn.ecommerce.common.application.exception.BusinessException;
+import com.dev.minn.ecommerce.common.application.exception.GlobalErrorCode;
+import com.dev.minn.ecommerce.common.domain.EventEnvelope;
 import com.dev.minn.ecommerce.common.utils.OtpUtils;
 import com.dev.minn.ecommerce.identity.constant.UserStatus;
 import com.dev.minn.ecommerce.identity.dto.PendingRegistration;
@@ -49,6 +50,7 @@ public class UserManagementAdapter implements UserManagementPort {
 
     private final String KEY_PENDING_REGISTRATION = "user:pending-registration:";
 
+    @Transactional
     @Override
     public RegistrationInitiateResponse initiateRegistration(RegistrationRequest request) {
         String email = request.getEmail();
@@ -65,11 +67,16 @@ public class UserManagementAdapter implements UserManagementPort {
 
         redisService.set(KEY_PENDING_REGISTRATION + email, cacheInfo, expiresIn, TimeUnit.SECONDS);
 
-        eventPublisher.publishEvent(new UserRegistrationInitiatedEvent(
-                email,
-                cacheInfo.getUsername(),
-                otp,
-                expiresIn
+        eventPublisher.publishEvent(EventEnvelope.of(
+                "user:registration:verify-otp",
+                UUID.randomUUID().toString(),
+                "identity",
+                new UserRegistrationInitiatedEvent(
+                        email,
+                        cacheInfo.getUsername(),
+                        otp,
+                        expiresIn
+                )
         ));
 
         return RegistrationInitiateResponse.builder()
@@ -108,13 +115,19 @@ public class UserManagementAdapter implements UserManagementPort {
         User user = userMapper.toUser(pendingInfo);
         user.setStatus(UserStatus.ACTIVE);
         user.addRole(role);
+        userRepository.save(user);
 
-        eventPublisher.publishEvent(new UserRegisteredEvent(
-                user.getEmail(),
-                user.getUsername()
+        eventPublisher.publishEvent(EventEnvelope.of(
+                "user:registration:welcome",
+                user.getId().toString(),
+                "identity",
+                new UserRegisteredEvent(
+                        user.getEmail(),
+                        user.getUsername()
+                )
         ));
 
-        return userMapper.toUserInfo(userRepository.save(user));
+        return userMapper.toUserInfo(user);
     }
 
     @Override

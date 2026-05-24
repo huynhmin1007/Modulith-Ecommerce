@@ -1,6 +1,6 @@
 package com.dev.minn.ecommerce.identity.service;
 
-import com.dev.minn.ecommerce.common.exception.BusinessException;
+import com.dev.minn.ecommerce.common.application.exception.BusinessException;
 import com.dev.minn.ecommerce.identity.config.RsaKeyProperties;
 import com.dev.minn.ecommerce.identity.dto.request.TokenExchangeRequest;
 import com.dev.minn.ecommerce.identity.dto.response.AuthenticationResponse;
